@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Expense</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'tracker/styles.css' %}">
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="sidebar">
+            <h3>Categories</h3>
+            <ul>
+                {% for category in categories %}
+                    <li>{{ category.name }}</li>
+                {% endfor %}
+            </ul>
+
+            <h3>Navigation</h3>
+
+            <a href="{% url 'expense_list' %}">Expense List</a>
+        </div>
+
+        <div class="content">
+
+            <h1>Add Expense</h1>
+
+            <form method="post" action="{% url 'add_expense' %}">
+                {% csrf_token %}
+                {{ form }}
+                <button type="submit">Add Expense</button>
+            </form>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
