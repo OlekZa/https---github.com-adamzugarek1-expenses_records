@@ -41,7 +41,7 @@
             {% for expense in expenses %}
                 <tr>
                     <td>{{ expense.category.name }}</td>
-                    <td>{{ expense.amount }}</td>
+                    <td>{{ expense.amount }} {{ expense.currency }}</td>
                     <td>{{ expense.date }}</td>
                     <td>{{ expense.name }}</td>
                 </tr>

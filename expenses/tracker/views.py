@@ -8,7 +8,7 @@ from django.views import View
 from django.views.generic import CreateView
 
 from .models import Category, Expense
-from .forms import ExpenseForm, RegisterUser
+from .forms import *
 
 
 class ExpenseListView(View):
@@ -25,21 +25,44 @@ class AddExpenseView(View):
 
     def get(self, request, *args, **kwargs):
         categories = Category.objects.all()
-        form = ExpenseForm()
+        form = ExpenseForm(categories=categories)
         return render(request, self.template_name, {'categories': categories, 'form': form})
 
     def post(self, request, *args, **kwargs):
-        form = ExpenseForm(request.POST, request.FILES)
-        print(request.FILES)
-        if form.is_valid():
+        categories = Category.objects.all()
+        form = ExpenseForm(request.POST, categories=categories)
 
-            print(form.cleaned_data)
+        if form.is_valid():
+            category_id = form.cleaned_data['category'].id
+
+            category = Category.objects.get(id=category_id)
+
+            expense = form.save(commit=False)
+            expense.category = category
+            expense.user = request.user
+            expense.save()
 
             form.save()
 
             return redirect('expense_list')
 
-        print(form.errors)
+        return render(request, self.template_name, {'form': form})
+
+
+class ManageCategoriesView(View):
+    template_name = 'tracker/manage_categories.html'
+
+    def get(self, request, *args, **kwargs):
+        categories = Category.objects.all()
+        form = CategoryForm()
+        return render(request, self.template_name, {'categories': categories, 'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = CategoryForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('manage_categories')
 
         categories = Category.objects.all()
         return render(request, self.template_name, {'categories': categories, 'form': form})
